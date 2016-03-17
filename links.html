@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang='ja'>
+	<head>
+		<!-- IE対応 -->
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<title>リンク臭</title>
+
+		<meta charset="UTF-8">
+
+		<!-- マルチデバイス対応 -->
+		<meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+		<!-- CSS -->
+		<link rel="stylesheet" type="text/css" href="dist/css/bootstrap.min.css">
+		<style>
+				.navbar-brand {
+					padding-top:3px;
+				}
+		</style>
+
+		<!-- JavaScript -->
+		<script src="dist/js/jquery-1.11.3.min.js"></script>
+		<script src="dist/js/bootstrap.min.js"></script>
+		<style>
+			#ej-main {
+				position: fixed;
+				/*top: 0px;*/
+				left: 0%;
+				width: 75%;
+				height: 95%;
+				overflow: auto;
+
+				/* 以下自由変更 OK */
+				/*padding: 100px ;*/
+				margin: auto;
+				/*background: #6EB7DB;*/
+			}
+			#ej-sidebar {
+				position: fixed;
+				/*top: 20px;*/
+				/*top: 0px;*/
+				right: 0px;
+				height: 95%;
+				overflow: auto;
+
+				/* 以下自由変更 OK */
+				width: 25%;
+				background: #f5f5f5;
+			}
+
+			body {
+				font-family: meiryo;
+				background:#F5F5F5;
+			}
+			.bordered {
+				/*border-top: 1px solid #F8F8F8;*/
+				border-top: none;
+				border-left: 1px solid #F8F8F8;
+				border-right: 1px solid #F8F8F8;
+				border-bottom: 1px solid #ccc;
+			}
+
+			.bordered-top {
+				border-top: none;
+			}
+
+			.bordered-end {
+				border-bottom: 1px solid #ccc;
+				color:#fff;
+			}
+
+			.bordered-right {
+				border-right: 1px solid #F8F8F8;
+			}
+			.panel-body {
+				padding-top: 0px;
+				padding-bottom: 0px;
+			}
+
+			.panel-group .panel + .panel{
+				margin: 0;
+			 }
+
+			.panel-group .panel{
+				border-radius: 0px;
+			}
+
+			.panel-default > .panel-heading{
+				background-color: #5EBABA;
+				color: #fff;
+			}
+		</style>
+
+	</head>
+	<body>
+	<div class="container" style="margin-top:30px;">
+		<div id="ej-main"></div>
+		<div id="ej-sidebar">
+			<div class="alert alert-danger" role="alert">Yahoo!トピックス</div>
+			<h5>
+			<div id="yahoo" class="feed-area"style="margin-bottom:15px;"></div>
+			</h5>
+			<div class="alert alert-info" role="alert">毎日新聞新着</div>
+			<h5>
+			<div id="mainichi-flash" style="margin-bottom:15px;"></div>
+			</h5>
+			<div class="alert alert-success" role="alert">＠IT</div>
+			<h5>
+			<div id="at-it" style="margin-bottom:15px;"></div>
+			</h5>
+			<div class="alert alert-warning" role="alert">ITMedia Security</div>
+			<h5>
+			<div id="itm-sec" style="margin-bottom:15px;"></div>
+			</h5>
+		</div>
+	</div>
+
+	<script>
+	var temp = "";
+	$(function(){
+		$.when(
+			$.getJSON("./res/link.json")
+		)
+		.done(function(data){
+			var linkdata = data;
+			temp += "<div class='panel-group' id='accordion'>";
+			for(var i in linkdata) {
+
+				//パネルヘッダー作成
+				var sysnum = "sys"+i;
+				temp += "<div class='panel panel-default'><div class='panel-heading'><h4 class='panel-title'>";
+				temp += "<a role='button' data-toggle='collapse' data-parent='#accordion' href='#"+sysnum+"'>";
+				temp += "【" + linkdata[i].sysname + "】";
+				temp += "</a></h4></div><!-- / panel-heading -->";
+				//ROW
+				temp += "<div id='"+sysnum+"' class='panel-collapse collapse'><div class='panel-body'><div class='row'>";
+
+				for(var j in linkdata[i].link) {
+
+					if(linkdata[i].link[j].url == null){
+						var cnt = linkdata[i].link[j].sub.length;
+						for(var k in linkdata[i].link[j].sub){
+							if(k == 0) {
+								temp += "<div class='col-md-2 bordered-top'>" + linkdata[i].link[j].category + "</div>";
+							} else if(k == cnt-1) {
+								temp += "<div class='col-md-2 bordered-end'>&nbsp;</div>";
+							} else {
+								temp += "<div class='col-md-2'>&nbsp;</div>";
+							}
+								temp += "<div class='col-md-10 bordered'><!-- sub -->";
+								temp += "<div class='col-md-2 bordered-right'><h6 style='padding: 3px 0px; margin:0;'>" + linkdata[i].link[j].sub[k].name + "</h6></div>";
+								temp += "<div class='col-md-10'><!-- link URL -->";
+								temp += "<a href='" + linkdata[i].link[j].sub[k].url + "' target='_blank'>";
+								temp += linkdata[i].link[j].sub[k].url;
+								temp += "</a>";
+								temp += "</div><!-- / link URL -->";
+								temp += "</div><!-- / sub -->";
+							}
+					}else {
+						temp += "<!-- GROUP -->";
+						temp += "<div class='col-md-4 bordered'>" + linkdata[i].link[j].category + "</div>";
+						temp += "<div class='col-md-8 bordered'><!-- sub -->";
+						temp += "<a href='" + linkdata[i].link[j].url + "' target='_blank'>";
+						temp += linkdata[i].link[j].url;
+						temp += "</a>";
+						temp += "</div><!-- / sub -->";
+						temp += "<!-- /GROUP -->";
+					}
+				}
+			temp += "</div><!-- / row -->";
+			temp += "</div><!-- / panel-body -->";
+			temp += "</div><!-- / panel-collapse -->";
+			temp += "</div><!-- / panel -->";
+			}
+			temp += "</div>";
+			 $("#ej-main").append(temp);
+		})
+		.fail(function(jqXHR, textStatus, errorThrown) {
+		console.log("エラー：" + textStatus);
+		console.log("テキスト：" + jqXHR.responseText);
+		});
+	});
+
+	</script>
+		<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+		<script type="text/javascript">
+		//url, 取得したいエントリ数, 表示させるタグid名
+		getFeed("http://news.yahoo.co.jp/pickup/rss.xml", 10, "yahoo" );
+		getFeed("http://rss.rssad.jp/rss/mainichi/flash.rss", 10, "mainichi-flash" );
+		getFeed("http://rss.rssad.jp/rss/itmatmarkit/rss.xml", 15, "at-it" );
+		getFeed("http://rss.rssad.jp/rss/itmnews/2.0/news_security.xml", 10, "itm-sec" );
+
+		function getFeed(url, entries_num, id){
+				google.load("feeds", "1");
+				function initialize() {
+						// キャッシュを最新に
+						var feed = new google.feeds.Feed(url + "?" + (new Date()).getTime());
+						// 表示数設定
+						feed.setNumEntries(entries_num);
+
+						feed.load(function(result) {
+							if (result.error) {
+								console.log("Failed Get Feed.");
+								console.log("error_code " + result.error.code + ": " + result.error.message);
+							} else {
+								var container = document.getElementById(id);
+
+								for (var i = 0; i < result.feed.entries.length; i++) {
+									var entry = result.feed.entries[i];
+									var tmpStr = entry.title.slice(0,2);
+									console.log(tmpStr);
+									//divタグ作成
+									var div = document.createElement("div");
+									div.setAttribute("id", i);
+									//aタグの作成
+									var a = document.createElement("a");
+									
+									// PRとADの文字があれば除外
+									if(tmpStr == "PR" | tmpStr == "AD") {
+										a.setAttribute("href", "#");
+									} else {
+										a.setAttribute("href", entry.link);
+										a.setAttribute("target", "_blank");
+										// 幅は21文字程度が限界…
+										a.appendChild(document.createTextNode(entry.title.slice(0,21)));
+									}
+
+									//結合
+									div.appendChild(a);
+									container.appendChild(div);
+								}
+
+							}
+						});
+					}
+				google.setOnLoadCallback(initialize);
+			}
+
+		</script>
+
+	</body>
+</html>
