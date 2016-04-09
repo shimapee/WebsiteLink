@@ -1,0 +1,67 @@
+/*
+WebStite Link CSS
+*/
+.navbar-brand {
+		padding-top:3px;
+}
+
+#ws-main {
+	position: fixed;
+	left: 0%;
+	width: 75%;
+	height: 95%;
+	overflow: auto;
+	margin: auto;
+}
+
+#ws-sidebar {
+	position: fixed;
+	right: 0px;
+	height: 95%;
+	overflow: auto;
+	width: 25%;
+	background: #f5f5f5;
+}
+
+body {
+	font-family: meiryo;
+	background:#F5F5F5;
+}
+
+.bordered {
+	border-top: none;
+	border-left: 1px solid #F8F8F8;
+	border-right: 1px solid #F8F8F8;
+	border-bottom: 1px solid #ccc;
+}
+
+.bordered-top {
+	border-top: none;
+}
+
+.bordered-end {
+	border-bottom: 1px solid #ccc;
+	color:#fff;
+}
+
+.bordered-right {
+	border-right: 1px solid #F8F8F8;
+}
+
+.panel-body {
+	padding-top: 0px;
+	padding-bottom: 0px;
+}
+
+.panel-group .panel + .panel{
+	margin: 0;
+}
+
+.panel-group .panel{
+	border-radius: 0px;
+}
+
+.panel-default > .panel-heading{
+	background-color: #5EBABA;
+	color: #fff;
+}

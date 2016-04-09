@@ -12,90 +12,15 @@
 
 		<!-- CSS -->
 		<link rel="stylesheet" type="text/css" href="dist/css/bootstrap.min.css">
-		<style>
-				.navbar-brand {
-					padding-top:3px;
-				}
-		</style>
-
+		<link rel="stylesheet" type="text/css" href="dist/css/mylink.css">
 		<!-- JavaScript -->
 		<script src="dist/js/jquery-1.11.3.min.js"></script>
 		<script src="dist/js/bootstrap.min.js"></script>
-		<style>
-			#ej-main {
-				position: fixed;
-				/*top: 0px;*/
-				left: 0%;
-				width: 75%;
-				height: 95%;
-				overflow: auto;
-
-				/* 以下自由変更 OK */
-				/*padding: 100px ;*/
-				margin: auto;
-				/*background: #6EB7DB;*/
-			}
-			#ej-sidebar {
-				position: fixed;
-				/*top: 20px;*/
-				/*top: 0px;*/
-				right: 0px;
-				height: 95%;
-				overflow: auto;
-
-				/* 以下自由変更 OK */
-				width: 25%;
-				background: #f5f5f5;
-			}
-
-			body {
-				font-family: meiryo;
-				background:#F5F5F5;
-			}
-			.bordered {
-				/*border-top: 1px solid #F8F8F8;*/
-				border-top: none;
-				border-left: 1px solid #F8F8F8;
-				border-right: 1px solid #F8F8F8;
-				border-bottom: 1px solid #ccc;
-			}
-
-			.bordered-top {
-				border-top: none;
-			}
-
-			.bordered-end {
-				border-bottom: 1px solid #ccc;
-				color:#fff;
-			}
-
-			.bordered-right {
-				border-right: 1px solid #F8F8F8;
-			}
-			.panel-body {
-				padding-top: 0px;
-				padding-bottom: 0px;
-			}
-
-			.panel-group .panel + .panel{
-				margin: 0;
-			 }
-
-			.panel-group .panel{
-				border-radius: 0px;
-			}
-
-			.panel-default > .panel-heading{
-				background-color: #5EBABA;
-				color: #fff;
-			}
-		</style>
-
 	</head>
 	<body>
 	<div class="container" style="margin-top:30px;">
-		<div id="ej-main"></div>
-		<div id="ej-sidebar">
+		<div id="ws-main"></div>
+		<div id="ws-sidebar">
 			<div class="alert alert-danger" role="alert">Yahoo!トピックス</div>
 			<h5>
 			<div id="yahoo" class="feed-area"style="margin-bottom:15px;"></div>
@@ -123,6 +48,7 @@
 		)
 		.done(function(data){
 			var linkdata = data;
+			console.log(linkdata);
 			temp += "<div class='panel-group' id='accordion'>";
 			for(var i in linkdata) {
 
@@ -173,7 +99,7 @@
 			temp += "</div><!-- / panel -->";
 			}
 			temp += "</div>";
-			 $("#ej-main").append(temp);
+			 $("#ws-main").append(temp);
 		})
 		.fail(function(jqXHR, textStatus, errorThrown) {
 		console.log("エラー：" + textStatus);
