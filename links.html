@@ -85,59 +85,71 @@
 			</h5>
 		</div>
 	</div>
-		<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+
 		<script type="text/javascript">
+    const feedapi = <Feed API>;
 		//url, 取得したいエントリ数, 表示させるタグid名
-		getFeed("http://news.yahoo.co.jp/pickup/rss.xml", 10, "yahoo" );
-		getFeed("http://rss.rssad.jp/rss/mainichi/flash.rss", 10, "mainichi-flash" );
-		getFeed("http://rss.rssad.jp/rss/itmatmarkit/rss.xml", 15, "at-it" );
-		getFeed("http://rss.rssad.jp/rss/itmnews/2.0/news_security.xml", 10, "itm-sec" );
+    var feeds = [
+      {
+        "chanel": "yahoo",
+        "url": "http://news.yahoo.co.jp/pickup/rss.xml",
+        "getEntry": 10
+      },
+      {
+        "chanel": "mainichi-flash",
+        "url": "http://rss.rssad.jp/rss/mainichi/flash.rss",
+        "getEntry": 10
+      },
+      {
+        "chanel": "at-it",
+        "url": "http://rss.rssad.jp/rss/itmatmarkit/rss.xml",
+        "getEntry": 15
+      },
+      {
+        "chanel": "itm-sec",
+        "url": "http://rss.rssad.jp/rss/itmnews/2.0/news_security.xml",
+        "getEntry": 10
+      }
+    ];
 
-		function getFeed(url, entries_num, id){
-				google.load("feeds", "1");
-				function initialize() {
-						// キャッシュを最新に
-						var feed = new google.feeds.Feed(url + "?" + (new Date()).getTime());
-						// 表示数設定
-						feed.setNumEntries(entries_num);
+    for (var i in feeds) {
+      //console.log(feeds[i]);
 
-						feed.load(function(result) {
-							if (result.error) {
-								console.log("Failed Get Feed.");
-								console.log("error_code " + result.error.code + ": " + result.error.message);
-							} else {
-								var container = document.getElementById(id);
+      // request data
+      data = {
+        "rssurl": feeds[i].url,
+        "maxcnt": 10
+      };
+      // Ajax - request lambda
+      getFeed(JSON.stringify(data), feeds[i].chanel);
+    }
 
-								for (var i = 0; i < result.feed.entries.length; i++) {
-									var entry = result.feed.entries[i];
-									var tmpStr = entry.title.slice(0,2);
-									//console.log(tmpStr);
-									//divタグ作成
-									var div = document.createElement("div");
-									div.setAttribute("id", i);
-									//aタグの作成
-									var a = document.createElement("a");
-									
-									// PRとADの文字があれば除外
-									if(tmpStr == "PR" | tmpStr == "AD") {
-										a.setAttribute("href", "#");
-									} else {
-										a.setAttribute("href", entry.link);
-										a.setAttribute("target", "_blank");
-										// 幅は21文字程度が限界…
-										a.appendChild(document.createTextNode(entry.title.slice(0,21)));
-									}
+    function getFeed(data, id) {
+      $.ajax({
+        type: "POST",
+        url: feedapi,
+        data: data,
+        dataType: 'json'
+      }).done(function(res){
+        res = JSON.parse(res);
+        console.log(res);
+        for(var i in res) {
+          var div = $("<div>");
+          div.attr({
+            "id": i
+          });
 
-									//結合
-									div.appendChild(a);
-									container.appendChild(div);
-								}
-
-							}
-						});
-					}
-				google.setOnLoadCallback(initialize);
-			}
+          var a = $("<a>");
+          a.attr({
+            "href": res[i].link,
+            "target": "_blank"
+          });
+          a.append(res[i].title.slice(0,21));
+          div.append(a);
+          $("#"+id).append(div);
+        }
+      });
+    };
 
 		</script>
 
