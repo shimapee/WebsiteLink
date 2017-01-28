@@ -2,6 +2,10 @@
 ## 概要
 リンクしておきたいサイトをJSONで保管しておき、  
 そのJSONファイルを表示させるだけのくだらないページです。  
+Google Feed APIの閉鎖に伴い、独自APIを作成しました。  
+AWS API GatewayからLambdaを呼び出し、指定したRSSフィードの記事を返却してくれます。  
+詳しくは[こちら](https://gist.github.com/shimapee/5f92c1bb3f7fbcb9892c4ae341fb20f1)
+
 JSONはこんな感じ…  
 ```
 [
@@ -47,6 +51,3 @@ JSONはこんな感じ…
 	}
 ]
 ```
-
-あとは、RSSも読めるようにしました。  
-趣味ですｗ  
