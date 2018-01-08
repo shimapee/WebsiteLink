@@ -16,54 +16,13 @@
 		<!-- JavaScript -->
 		<script src="dist/js/jquery-1.11.3.min.js"></script>
 		<script src="dist/js/bootstrap.min.js"></script>
-		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular.min.js"></script>
-		<script src="dist/js/ws-link.js"></script>
+		<script src="dist/js/link.js"></script>
+		<script src="dist/js/feedapi.js"></script>
 	</head>
 	<body>
 	<div class="container" style="margin-top:30px;">
 		<div id="ws-main">
-			<div class="panel-group" id="accordion" ng-controller="getjsoncontroller">
-				<div class="panel panel-default" ng-repeat="result in results">
-					<div class="panel-heading">
-						<h4 class="panel-title">
-							<a role="button" data-toggle="collapse" data-parent="#accordion" href="#sys{{$index}}">
-							【{{result.sysname}}】
-							</a>
-						</h4>
-					</div><!-- / panel-heading -->
-					<div id="sys{{$index}}" class="panel-collapse collapse">
-						<div class="panel-body">
-							<div class="row">
-								<div ng-repeat="categorys in result.link">
-									<!-- もう1階層したあり -->
-									<div ng-repeat="subs in categorys.sub">
-											<div ng-if="$first" class="col-md-2 bordered-top">{{categorys.category}}</div>
-											<div ng-if="$last" class='col-md-2 bordered-end'>&nbsp;</div>
-											<div ng-if="$middle" class='col-md-2'>&nbsp;</div>
-										<div class="col-md-10 bordered"><!-- sub -->
-												<div class="col-md-2 bordered-right">
-													<h6 style="padding: 3px 0px; margin:0;">{{subs.name}}</h6>
-												</div>
-												<div class="col-md-10"><!-- link URL -->
-													<a href="{{subs.url}}" target="_blank">
-														{{subs.url}}
-													</a>
-												</div><!-- / link URL -->
-											</div><!-- / sub -->
-										</div><!-- /subs -->
-										<!-- なし -->
-										<div class="col-md-4 bordered" ng-show="isObject(categorys.url)">{{categorys.category}}</div>
-										<div class="col-md-8 bordered" ng-show="isObject(categorys.url)"><!-- sub -->
-											<a href="{{categorys.url}}" target="_blank">
-												{{categorys.url}}
-											</a>
-										</div><!-- / sub -->
-										<!-- /なし -->
-								</div><!-- / categorys -->
-							</div><!-- / row -->
-						</div><!-- / panel-body -->
-					</div><!-- / panel-collapse -->
-				</div><!-- / panel -->
+			<div class="panel-group" id="accordion">
 			</div>
 		</div>
 		<div id="ws-sidebar">
@@ -86,72 +45,58 @@
 		</div>
 	</div>
 
-		<script type="text/javascript">
-    const feedapi = <Feed API>;
-		//url, 取得したいエントリ数, 表示させるタグid名
-    var feeds = [
-      {
-        "chanel": "yahoo",
-        "url": "http://news.yahoo.co.jp/pickup/rss.xml",
-        "getEntry": 10
-      },
-      {
-        "chanel": "mainichi-flash",
-        "url": "http://rss.rssad.jp/rss/mainichi/flash.rss",
-        "getEntry": 10
-      },
-      {
-        "chanel": "at-it",
-        "url": "http://rss.rssad.jp/rss/itmatmarkit/rss.xml",
-        "getEntry": 15
-      },
-      {
-        "chanel": "itm-sec",
-        "url": "http://rss.rssad.jp/rss/itmnews/2.0/news_security.xml",
-        "getEntry": 10
-      }
-    ];
+	<script type="text/javascript">
+		$(function(){
+			for(var i in links){
+				//console.log(links[i].sysname);
+				var temp_panel_header = '<div class="panel panel-default">';
+				temp_panel_header += '<div class="panel-heading">';
+				temp_panel_header += '<h4 class="panel-title">';
+				temp_panel_header += '<a role="button" data-toggle="collapse" data-parent="#accordion" href="#sys'+i+'">';
+				temp_panel_header += links[i].sysname;
+				temp_panel_header += '</a>';
+				temp_panel_header += '</div><!-- / panel-heading -->';
+				temp_panel_header += '<div id="sys'+i+'" class="panel-collapse collapse">';
+				temp_panel_header += '<div class="panel-body"><div class="row">';
+				var temp_panel_body = '';
+				console.log(links[i].sysname);
+				for(var j in links[i].link) {
+					console.log(links[i].link[j].category);
+					if(links[i].link[j].url != null) {
+						temp_panel_body += '<div class="col-md-2 bordered">' + links[i].link[j].category + '</div>';
+						temp_panel_body += '<div class="col-md-10 bordered"><!-- sub -->';
+						temp_panel_body += '<div class="col-md-offset-2 col-md-10"><!-- sub -->';
+						temp_panel_body += '<a href="' + links[i].link[j].url + '" target="_blank">';
+						temp_panel_body += links[i].link[j].url;
+						temp_panel_body += '</a></div></div><!-- / sub -->';
+						console.log(links[i].link[j].url);
+					} else {
+						var subs = links[i].link[j].sub;
+						console.log(subs.length);
+						for (var k in subs) {
+							if(k == 0) temp_panel_body += '<div class="col-md-2 bordered-top">' + links[i].link[j].category +'</div>';
+							if(k == subs.length-1) temp_panel_body += '<div class="col-md-2 bordered-end">&nbsp;</div>';
+							if(k != 0 && k < subs.length-1) temp_panel_body += '<div class="col-md-2">&nbsp;</div>';
+							temp_panel_body += '<div class="col-md-10 bordered"><!-- sub -->';
+							temp_panel_body += '<div class="col-md-2 bordered-right">';
+							temp_panel_body += '<h6 style="padding: 3px 0px; margin:0;">'+subs[k].name+'</h6>';
+							temp_panel_body += '</div><div class="col-md-10"><!-- link URL -->';
+							temp_panel_body += '<a href="'+subs[k].url+'" target="_blank">';
+							temp_panel_body += subs[k].url;
+							temp_panel_body += '</a></div><!-- / link URL --></div><!-- / sub -->';
+							console.log(subs[k].name);
+							console.log(subs[k].url)
+						}
+						
+					}
+				}
+				temp_panel_header += temp_panel_body;
+				temp_panel_header += '</div><!-- / row --></div><!-- / panel-body --></div><!-- / panel-collapse --></div><!-- / panel -->';
+				$("#accordion").append(temp_panel_header);
+			}
+		});
 
-    for (var i in feeds) {
-      //console.log(feeds[i]);
-
-      // request data
-      data = {
-        "rssurl": feeds[i].url,
-        "maxcnt": 10
-      };
-      // Ajax - request lambda
-      getFeed(JSON.stringify(data), feeds[i].chanel);
-    }
-
-    function getFeed(data, id) {
-      $.ajax({
-        type: "POST",
-        url: feedapi,
-        data: data,
-        dataType: 'json'
-      }).done(function(res){
-        res = JSON.parse(res);
-        console.log(res);
-        for(var i in res) {
-          var div = $("<div>");
-          div.attr({
-            "id": i
-          });
-
-          var a = $("<a>");
-          a.attr({
-            "href": res[i].link,
-            "target": "_blank"
-          });
-          a.append(res[i].title.slice(0,21));
-          div.append(a);
-          $("#"+id).append(div);
-        }
-      });
-    };
-
-		</script>
+	</script>
 
 	</body>
 </html>
